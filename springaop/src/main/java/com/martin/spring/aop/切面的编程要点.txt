@@ -1,0 +1,61 @@
+1.引入相应的包
+   在maven的pom文件中加入下列的依赖包
+    <!-- spring aop依赖包 -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aop</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	<!-- spring上下文包，加载spring的配置时用到 -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
+	<!-- spring test包 -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<version>${spring.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<!-- AspectJ注解方式用到的依赖包 -->
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjrt</artifactId>
+		<version>${aspectj.version}</version>
+	</dependency>
+	
+	<!-- 使用AspectJ注解需要的依赖包 -->
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjweaver</artifactId>
+		<version>${aspectj.version}</version>
+	</dependency>
+
+2. 在spring的配置中加入aop命名空间
+   xmlns:aop="http://www.springframework.org/schema/aop"
+   xsi:schemaLocation="http://www.springframework.org/schema/aop   
+                       http://www.springframework.org/schema/aop/spring-aop.xsd"
+
+3. 在spring的配置中配置包自动扫描及使用Autowired注解
+   <context:component-scan base-package="com.martin.spring"></context:component-scan>
+4. 在spring的配置中使用AspectJ
+   <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+   
+5. 把横切关注点的代码抽象到切面的类中
+   i.  切面是IOC容器里的Bean 
+   ii. 切面还需要加入@AscpectJ注解
+   iii.切面中需要把方法声明为通知  并为通知指定切点表达式  
+             通知的类型有5种：前置(Before)、后置(After)、返回(AfterRunning)、异常(AfterThrowing)和环绕(Around)通知
+   
+6.面向切面编程的几个重要的概念
+  i.   切面(Aspect) ： 横切关注点  （跨应用程序多个模块的功能被模块化的特殊对象
+  ii.  通知(Advice) : 切面必须完成的工作
+  iii. 目标(target) : 被通知的对象
+  iv.  代理(Proxy)  : 向目标对象应用通知之后返回的对象
+  v.   连接点(JoinPoint) : 程序执行的某个特定的位置，它是真实存在的，如某个方法的调用前、调用后、抛出异常后等。
+  vi.  切点(PointCut)    : AOP通过切点定位到连接点   它们就像数据库里的记录(连接点)与查询条件(切点)的关系
+                           切点可以通过org.aspectj.lang.annotation.Pointcut接口来描述
+                           
+                      

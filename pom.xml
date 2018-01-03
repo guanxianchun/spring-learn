@@ -18,6 +18,7 @@
     <modules>
         <module>hibernate</module>
         <module>mybatis</module>
+        <module>springaop</module>
     </modules>
 
     <dependencies>
