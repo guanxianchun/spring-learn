@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+    <!--Spring 整合Hibernate时，可以不需要hibernate.cfg.xml配置 
+    	但还是建议保留这一个问题，因为在这里配置hibernate的基本配置比较好点
+    	下面我来配置hibernate的方言、SQL显示和格式化、数据库表的生成策略（或二级缓存）
+     -->
+     
+     <property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+     <property name="hibernate.show_sql">true</property>
+     <property name="hibernate.format_sql">true</property>
+     <property name="hibernate.hbm2dll.auto">update</property>
+     <!-- 配置Hibernate二级缓存的相关属性 -->
+     
+     
+    </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+                        http://www.springframework.org/schema/aop 
+                        http://www.springframework.org/schema/aop/spring-aop-4.1.xsd 
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd 
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
+	<!-- 包扫描配置 -->
+	<context:component-scan base-package="com.martin.spring">
+	</context:component-scan>
+	<!-- 启用Spring对基于@AspectJ aspects的配置支持 ,激活自动代理功能 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<!-- 该 BeanPostProcessor 将自动对标注 @Autowired 的 Bean 进行注入 -->
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+	<!-- 配置数据源 1. 导入数据库的连接配置文件 2. 配置dataSource 3. 配置Hibernate SessionFactory -->
+	<context:property-placeholder location="classpath:db.properties" />
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.url}"></property>
+
+		<property name="initialPoolSize" value="${jdbc.initPoolSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+	</bean>
+	<!-- 配置Hibernate的SessionFactory实例 通过Spring提供的LocalSessionFactoryBean进行配置 -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<!-- 配置数据源属性 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 配置Hibernate 配置文件的位置及名称 -->
+		<property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+		<!-- 扫描Hibernate注解配置的entity 
+		<property name="packagesToScan" value="com.martin.spring.hibernate.bean"></property>
+		-->
+		<!-- 配置Hibernate映射文件的位置及名称 可使用通配符 -->
+		<property name="mappingLocations"
+			value="classpath:com/martin/spring/hibernate/bean/*.hbm.xml"></property>
+		
+	</bean>
+	<!-- 配置Spring的声明式事务 -->
+	<!-- 1. 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 2. 配置事务增强处理Bean，指定事务管理器 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<!-- 配置详细事务处理语义 -->
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="load*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- 配置切面 -->
+	<aop:config>
+		<!-- 切点 -->
+		<aop:pointcut expression="execution(* com.martin.spring.hibernate.service.*.*(..))" id="servicePointcut"/>
+		<!-- 切面 -->
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointcut"/>
+	</aop:config>
+	<!-- Spring 自动管理，通过AOP或注解@Transactional实现。session和事务都自动管理 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+</beans>
+
+
+
+
