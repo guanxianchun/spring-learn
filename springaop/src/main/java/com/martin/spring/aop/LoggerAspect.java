@@ -12,7 +12,7 @@ import java.util.List;
  * @author 管贤春
  * @date 2017年12月15日 上午9:28:30
  * @email psyche19830113@163.com
- * 
+ * 　　定义切面LoggerAspect类
  * 1. 使用@Component注解 把其放入到IOC容器中
  * 2. 使用Aspect注解 声明该类是一个切面
  * 3. 在类方法上声明通知
@@ -21,7 +21,7 @@ import java.util.List;
 @Aspect
 @Component
 public class LoggerAspect {
-	
+	//切点
 	@Pointcut("execution(* com.martin.spring.service.CalculateService.*(int,int))")
 	private void aspectMethod(){};
 	/**
